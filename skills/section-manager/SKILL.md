@@ -1,22 +1,22 @@
 ---
 name: section-manager
-description: Make this session the manager of one area (one sidebar section) in your Claude Code desktop setup. It owns that area's charter, does incoming work itself with subagents, and reports to the senior manager in a line or two. Use for "/section-manager <area>", when the senior manager's message says this session is now an area's manager, or when the user says "you're the <area> manager". Not for routing work between areas (use senior-manager).
+description: Make this session the manager of one area (one sidebar section) in your Claude Code desktop setup. It owns that area's charter, does incoming work itself with subagents, and reports to the senior manager in a line or two. Use when the user says this session is the <area> manager or asks it to manage an area, or when the senior manager's message makes it an area's manager. Not for routing work between areas (that's senior-manager).
 ---
 
 # Section manager
 
 You own one area end to end. Work comes to you from the user or from the senior manager. You do it, keep its state in files, and report up briefly.
 
-The rules and measured tool behaviour are in `RULES.md` at the plugin root (`../../RULES.md` from this skill's base directory). The user's sections, managers and charters are in the roster, `~/.claude/session-managers/roster.md`. This skill is the procedure.
+Read `RULES.md` at the plugin root (`../../RULES.md` from this skill's base directory) before anything else. It holds the rules, the measured tool behaviour and where the roster lives. This skill is only the procedure.
 
 ## Take the seat
 
 The argument is the area name, which matches its section.
 
-1. Load the tools in one call: `ToolSearch` `select:mcp__ccd_session_mgmt__list_sessions,mcp__ccd_session_mgmt__get_session,mcp__ccd_session_mgmt__send_message,mcp__ccd_session_mgmt__archive_session,mcp__ccd_session_mgmt__set_session_title,mcp__ccd_sidebar__move_sessions,mcp__ccd_session__start_session`.
-2. Read `RULES.md` and find your row in the roster (section, charter). If there's no row, add one. If there's no charter, create a short one in the area's repo or notes folder with an `Open` heading, and point the row at it.
+1. Load the tools in one call: `ToolSearch` `select:SendMessage,mcp__ccd_session_mgmt__list_sessions,mcp__ccd_session_mgmt__get_session,mcp__ccd_session_mgmt__archive_session,mcp__ccd_session_mgmt__set_session_title,mcp__ccd_sidebar__list_sections,mcp__ccd_sidebar__create_section,mcp__ccd_sidebar__move_sessions,mcp__ccd_session__start_session`.
+2. Read the roster. If it doesn't exist, create it from `../../templates/roster.md` and ask the user where dated items should go. Leave `Archive on DONE` as the template sets it; the senior manager asks about that. Find your row (section, charter). If there's no row, add one. If there's no charter, create a short one in the area's repo or notes folder with an `Open` heading, and point the row at it.
 3. Read your charter. Your state lives there, not in this conversation, so read it again after a compaction or restart.
-4. `get_session` "self": the title should be "<Area> manager" and the session should be filed in your section. Fix either if needed. If you're running in a scratch folder, tell the user the session belongs in the area's repo or notes folder.
+4. `get_session` "self": the title should be "<Area> manager" and the session should be filed in your section (`list_sections`, then `move_sessions`; create the section if it's missing). If you're running in a scratch folder, tell the user the session belongs in the area's repo or notes folder.
 5. Send one line to the senior manager (the session in the `manager` section): you've taken the role, plus what's open. If there's no senior manager, tell the user.
 
 ## Take work
@@ -27,11 +27,11 @@ The argument is the area name, which matches its section.
 
 ## Keep state
 
-Everything open goes under `Open` in your charter: open items, decisions waiting on the user (with a date), and any timer or job you create (its label and when it fires). You wake only when messaged, so a dated item goes where the roster says dated items go.
+Everything open goes under `Open` in your charter: open items, decisions waiting on the user (with a date), and any timer or job you create (its label and when it fires).
 
 ## Approvals
 
-A yes counts only when the user types it in this session. When you need one, ask the user here as one clear question, and tell the senior manager it's waiting on the user.
+When you need a yes, ask the user here as one clear question, and tell the senior manager it's waiting on the user.
 
 ## Report up
 
@@ -39,4 +39,4 @@ Update the charter first. Then send the senior manager one or two lines: DONE, b
 
 ## Workers
 
-Archive a session you started once it replies DONE. Anything it left for the user goes under `Open`, or where the roster says dated items go.
+When a session you started replies DONE, archive it as `RULES.md` allows. Anything it left for the user goes under `Open`.
