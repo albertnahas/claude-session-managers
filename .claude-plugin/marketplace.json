@@ -1,0 +1,12 @@
+{
+  "name": "session-managers",
+  "description": "Claude Code plugin: a manager hierarchy for your desktop sessions.",
+  "owner": { "name": "Albert Nahas", "url": "https://github.com/albertnahas" },
+  "plugins": [
+    {
+      "name": "session-managers",
+      "source": "./",
+      "description": "A senior manager and section managers for Claude Code desktop sessions."
+    }
+  ]
+}
