@@ -10,12 +10,13 @@ const FILES: Record<string, object> = {
   'local_old.json': { sessionId: 'local_old', title: 'Old', isArchived: true },
 }
 
-function machine(on: any, id: string, { cli = 'cli-me', files = FILES, agents = [] as object[] } = {}) {
+function machine(on: any, id: string, { cli = 'cli-me', files = FILES, agents = [] as object[], size = 200_000 } = {}) {
   mock.env(on, { HOME: '/home/u', CLAUDE_CODE_ACCOUNT_UUID: 'acc', CLAUDE_CODE_ORGANIZATION_UUID: 'org', CLAUDE_CODE_HOST_SESSION_ID: id })
   on('fs.read', (_: unknown, e: any) => ({ value: JSON.stringify(files[e.path.slice(DIR.length + 1)]) ?? '{"half' }))
   on('agent.list', () => ({ value: agents }))
   on('fs.list', () => ({ value: [...Object.keys(files), 'local_half.json'].map((name) => ({ name, kind: 'file', size: 1, mtimeMs: 0 })) }))
   on('session.id', () => ({ value: cli }))
+  on('session.messages', () => ({ value: [{ role: 'user', content: 'x'.repeat(size) }] }))
   on('clock.now', () => ({ value: 3_600_000 }))
   on('prompt.submit', (_: unknown, e: any) => ({ text: e.text, context: e.context }))
 }
@@ -86,6 +87,12 @@ test('a finished turn is trimmed to what was said, and the next /compact is the 
   expect((await $.session.compact({ trigger: 'manual', messages: [] })).skip).toBe('engine')
 })
 
+test('a long paste is cut, so one trim is enough', async ($: any, on: any) => {
+  machine(on, 'local_me')
+  const kept = await finish($, on, [say('user', 'x'.repeat(100_000))])
+  expect(kept[0].text.length).toBe(4000)
+})
+
 test('only the last 12 messages stay', async ($: any, on: any) => {
   machine(on, 'local_me')
   const kept = await finish($, on, Array.from({ length: 30 }, (_, i) => say(i % 2 ? 'assistant' : 'user', `${i}`)))
@@ -100,4 +107,9 @@ test('no trim while a subagent runs', async ($: any, on: any) => {
 test('no trim after an interrupted turn', async ($: any, on: any) => {
   machine(on, 'local_me')
   expect(await finish($, on, [say('user', 'a')], 'aborted')).toBe(undefined)
+})
+
+test('no trim while little has piled up', async ($: any, on: any) => {
+  machine(on, 'local_me', { size: 1000 })
+  expect(await finish($, on, [say('user', 'a')])).toBe(undefined)
 })
