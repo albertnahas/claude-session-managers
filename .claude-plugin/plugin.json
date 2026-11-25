@@ -1,6 +1,6 @@
 {
   "name": "session-managers",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A senior manager and section managers for your Claude Code desktop sessions: route requests to the session that owns them, file sessions into sidebar sections, and archive them once they're done.",
   "author": { "name": "Albert Nahas", "url": "https://github.com/albertnahas" },
   "homepage": "https://github.com/albertnahas/claude-session-managers",
