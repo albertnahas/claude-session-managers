@@ -39,6 +39,8 @@ From then on, ask it for things ("have the blog session draft the launch post") 
 /session-managers:section-manager blog
 ```
 
+The senior manager doesn't grow. A small hook gives it a fresh list of your open sessions with every message, and after each answer trims its context to the last 8 messages. The trim makes no model call, and your transcript on screen stays. It reads the desktop app's own session files on macOS, an undocumented format that an update may change; if it can't read them, the manager works as before and just isn't trimmed.
+
 The roster holds your setup: which sections exist, who manages each one, and where each area's charter is. See [examples/roster.md](examples/roster.md). To remove everything, uninstall the plugin and delete `~/.claude/session-managers/`. Sections and session titles stay as they are.
 
 ## What it can't do
