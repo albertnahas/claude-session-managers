@@ -59,7 +59,7 @@ function card(s: Stored, now: number): string {
   const ago = Math.round((now - (s.lastActivityAt ?? 0)) / 3_600_000)
   const state = s.turnWrapUp?.description ?? s.postTurnSummary?.status_detail ?? ''
   const waiting = s.turnWrapUp?.needsUser ?? s.postTurnSummary?.needs_action
-  return `- ${line(s.title)} | ${s.sessionId} | ${s.cwd} | active ${ago}h ago | ${line(state)}${waiting ? ` | WAITING ON USER: ${line(waiting)}` : ''}`
+  return `- ${line(s.title)} | ${s.sessionId} | ${line(s.cwd)} | active ${ago}h ago | ${line(state)}${waiting ? ` | WAITING ON USER: ${line(waiting)}` : ''}`
 }
 
 function isTalk(m: SessionMessage): boolean {
