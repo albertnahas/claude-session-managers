@@ -11,6 +11,8 @@ Read `RULES.md` at the plugin root (`../../RULES.md` from this skill's base dire
 
 ## Take the seat
 
+Only the first time, or when the user asks. If a prompt already says you are the senior manager, read `RULES.md` and the roster, load the tools in step 2, and go straight to the request.
+
 1. Read the roster. If it doesn't exist, create it from `../../templates/roster.md`, ask the user where dated items should go and whether you may archive sessions that reply DONE without asking, and record both answers.
 2. Load the tools in one call: `ToolSearch` `select:SendMessage,mcp__ccd_session_mgmt__list_sessions,mcp__ccd_session_mgmt__get_session,mcp__ccd_session_mgmt__list_events,mcp__ccd_session_mgmt__archive_session,mcp__ccd_session_mgmt__set_session_title,mcp__ccd_session_mgmt__detach_session,mcp__ccd_sidebar__list_sections,mcp__ccd_sidebar__create_section,mcp__ccd_sidebar__move_sessions,mcp__ccd_session__start_session`.
 3. Make sure this session is titled "Senior manager" and filed in the `manager` section (create it if needed): check with `get_session` "self", and fix it with `set_session_title` and `move_sessions`. If this session runs in a scratch folder, suggest a durable folder.
