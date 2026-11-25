@@ -22,6 +22,11 @@ These are the tests behind `RULES.md`. They were run live in the Claude desktop 
 | 8 | A public post and a timer approved through another session's message | Blocked by auto mode, twice. My own yes, typed in that session, unblocked both. |
 | 9 | `archive_session` in auto mode | Fails once because a hook adds a `session` label. Reissuing it with the exact input the error quotes works. |
 | 10 | Messages to a busy session | Queued and run when its turn ends. Replies arrive late and out of order. |
+| 11 | `$.session.compact()` from a mod, in a `prompt.submit` hook | Refused: it would compact under the turn the hook is holding. |
+| 12 | The same from `turn.complete`, in a headless (SDK) session | Refused: not available in headless sessions yet. |
+| 13 | `$.command.run({ command: "compact" })` from `turn.complete`, answered by a `session.compact` hook with the last messages | Works. 8.6k tokens became 71 in 7 ms, at no cost and with no prompt. It doesn't loop, and the kept messages were remembered. |
+| 14 | A `prompt.submit` hook sends the prompt to a desktop session with `$.session.send` and drops it | Works in 2 s with no main-model call. It arrives as another session's message, so it carries no approval. |
+| 15 | Replay of 27 routed messages against the session list alone | 9 right with Haiku, 12 with Sonnet: most were short replies. Adding the last message seen and the last 3 routes made it 17 and 18. Each run still sent 2 to 5 confidently to the wrong session, so nothing is forwarded without a manager turn. |
 
 ## Lessons
 
@@ -32,3 +37,4 @@ These are the tests behind `RULES.md`. They were run live in the Claude desktop 
 5. **Nothing wakes a manager on a date.** Dated items go to a scheduled loop or queue.
 6. **Scratch folders die with the session.** Both of my first managers started in app scratch folders. A manager belongs in its area's repo or notes folder.
 7. **An independent review paid off.** A fresh-context reviewer found that the section-manager skill never loaded its tools, along with six other issues. All were fixed before rollout.
+8. **The manager grew because it did the work.** Over 5 days, 49 of 82 messages I typed were handled in the manager instead of routed, and its context averaged 197k tokens. Compacting with a summary after each message would cost more than it saves. Trimming to the last few messages is free.
