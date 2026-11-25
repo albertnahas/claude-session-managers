@@ -83,7 +83,7 @@ export const register: Register = (on) => {
 
   on('turn.complete', async ($, e, next) => {
     const result = await next(e)
-    const isDone = e.agentId === undefined && e.reason === 'answer'
+    const isDone = e.agentId === undefined && e.reason === 'answer' && !isTrimming
     if (isDone && (await managerStore($)) && !(await $.agent.list()).some((a) => a.status === 'running')) {
       isTrimming = true
       void $.command.run({ command: 'compact' }).catch(() => undefined).then(() => { isTrimming = false })
